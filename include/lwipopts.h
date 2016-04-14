@@ -1053,6 +1053,11 @@
 #endif
 
 /**
+ * 2 * TCP_MSL defines duration of socket TIME-WAIT state in ms.
+ */
+#define TCP_MSL 2500UL
+
+/**
  * LWIP_EVENT_API and LWIP_CALLBACK_API: Only one of these should be set to 1.
  *     LWIP_EVENT_API==1: The user defines lwip_tcp_event() to receive all
  *         events (accept, sent, etc) that happen in the system.
