@@ -1,4 +1,5 @@
 CC = xtensa-lx106-elf-gcc
+AR = xtensa-lx106-elf-ar
 DEFS = -DLWIP_OPEN_SRC -DPBUF_RSV_FOR_WLAN -DEBUF_LWIP -DICACHE_FLASH
 COPT = -Os
 CFLAGS = $(DEFS) $(COPT) -Iinclude -Wl,-EL -mlongcalls -mtext-section-literals
