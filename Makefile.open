@@ -52,4 +52,4 @@ install: $(LIB)
 	cp $(LIB) $(PREFIX)/xtensa-lx106-elf/sysroot/usr/lib/
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) $(LIB)
