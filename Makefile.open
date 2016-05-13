@@ -1,6 +1,6 @@
 CC = xtensa-lx106-elf-gcc
 AR = xtensa-lx106-elf-ar
-DEFS = -DLWIP_OPEN_SRC -DPBUF_RSV_FOR_WLAN -DEBUF_LWIP -DICACHE_FLASH
+DEFS = -DLWIP_OPEN_SRC -DPBUF_RSV_FOR_WLAN -DEBUF_LWIP -DICACHE_FLASH -DMEMCPY=memcpy -DSMEMCPY=memcpy
 COPT = -Os
 CFLAGS = $(DEFS) $(COPT) -Iinclude -Wl,-EL -mlongcalls -mtext-section-literals $(CFLAGS_EXTRA)
 # Install prefix of esp-open-sdk toolchain
