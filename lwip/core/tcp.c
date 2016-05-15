@@ -59,8 +59,8 @@
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #endif
 
-#if TCP_DEBUG
-const char tcp_state_str_rodata[][12] ICACHE_RODATA_ATTR = {
+#if 1 || TCP_DEBUG
+const char tcp_state_str[][12] ICACHE_RODATA_ATTR = {
   "CLOSED",      
   "LISTEN",      
   "SYN_SENT",    
@@ -74,7 +74,7 @@ const char tcp_state_str_rodata[][12] ICACHE_RODATA_ATTR = {
   "TIME_WAIT"   
 };
 
-char tcp_state_str[12];
+//char tcp_state_str[12];
 #endif
 
 /* Incremented every coarse grained timer shot (typically every 500 ms). */
@@ -1526,7 +1526,7 @@ tcp_eff_send_mss(u16_t sendmss, ip_addr_t *addr)
 }
 #endif /* TCP_CALCULATE_EFF_SEND_MSS */
 
-#if TCP_DEBUG
+#if 0 && TCP_DEBUG
 const char*
 tcp_debug_state_str(enum tcp_state s)
 {
@@ -1536,6 +1536,12 @@ tcp_debug_state_str(enum tcp_state s)
 }
 #endif
 
+#undef TCP_DEBUG
+#define TCP_DEBUG LWIP_DBG_ON
+#undef LWIP_DBG_TYPES_ON
+#define LWIP_DBG_TYPES_ON TCP_DEBUG
+#undef LWIP_DEBUGF
+#define LWIP_DEBUGF(debug, message) DEBUG_printf message
 #if TCP_DEBUG || TCP_INPUT_DEBUG || TCP_OUTPUT_DEBUG
 /**
  * Print a tcp header for debugging purposes.

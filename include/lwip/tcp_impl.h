@@ -444,7 +444,7 @@ u16_t tcp_eff_send_mss(u16_t sendmss, ip_addr_t *addr)ICACHE_FLASH_ATTR;
 err_t tcp_recv_null(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)ICACHE_FLASH_ATTR;
 #endif /* LWIP_CALLBACK_API */
 
-#if TCP_DEBUG || TCP_INPUT_DEBUG || TCP_OUTPUT_DEBUG
+#if 1 || TCP_DEBUG || TCP_INPUT_DEBUG || TCP_OUTPUT_DEBUG
 void tcp_debug_print(struct tcp_hdr *tcphdr)ICACHE_FLASH_ATTR;
 void tcp_debug_print_flags(u8_t flags)ICACHE_FLASH_ATTR;
 void tcp_debug_print_state(enum tcp_state s)ICACHE_FLASH_ATTR;
