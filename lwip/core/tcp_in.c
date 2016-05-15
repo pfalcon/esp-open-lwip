@@ -75,6 +75,10 @@ static struct pbuf *recv_data;		//���Ķ����pbuf
 
 struct tcp_pcb *tcp_input_pcb;	//��ǰ���Ŀ��ƿ�
 
+/* Set to true to call (once) the poll callback at the end of
+   tcp_input(). */
+static force_poll_cb;
+
 /* Forward declarations. */
 static err_t tcp_process(struct tcp_pcb *pcb)ICACHE_FLASH_ATTR;
 static void tcp_receive(struct tcp_pcb *pcb)ICACHE_FLASH_ATTR;
@@ -467,6 +471,11 @@ aborted:
 
   LWIP_ASSERT("tcp_input: tcp_pcbs_sane()", tcp_pcbs_sane());
   PERF_STOP("tcp_input");
+
+  if (force_poll_cb) {
+    force_poll_cb = 0;
+    TCP_EVENT_POLL(pcb, err);
+  }
 }
 
 /**
@@ -758,6 +767,7 @@ tcp_process(struct tcp_pcb *pcb)
           }
           return ERR_ABRT;
         }
+        force_poll_cb = 1;
         old_cwnd = pcb->cwnd;
         /* If there was any data contained within this ACK,
          * we'd better pass it on to the application as well. */
