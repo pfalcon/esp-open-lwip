@@ -325,7 +325,7 @@ dns_init_local()
   for (i = 0; i < sizeof(local_hostlist_init) / sizeof(struct local_hostlist_entry); i++) {
     struct local_hostlist_entry *init_entry = &local_hostlist_init[i];
     LWIP_ASSERT("invalid host name (NULL)", init_entry->name != NULL);
-    namelen = os_strlen(init_entry->name);
+    namelen = strlen(init_entry->name);
     LWIP_ASSERT("namelen <= DNS_LOCAL_HOSTLIST_MAX_NAMELEN", namelen <= DNS_LOCAL_HOSTLIST_MAX_NAMELEN);
     entry = (struct local_hostlist_entry *)memp_malloc(MEMP_LOCALHOSTLIST);
     LWIP_ASSERT("mem-error in dns_init_local", entry != NULL);
@@ -420,7 +420,7 @@ dns_local_addhost(const char *hostname, const ip_addr_t *addr)
   struct local_hostlist_entry *entry;
   size_t namelen;
   LWIP_ASSERT("invalid host name (NULL)", hostname != NULL);
-  namelen = os_strlen(hostname);
+  namelen = strlen(hostname);
   LWIP_ASSERT("namelen <= DNS_LOCAL_HOSTLIST_MAX_NAMELEN", namelen <= DNS_LOCAL_HOSTLIST_MAX_NAMELEN);
   entry = (struct local_hostlist_entry *)memp_malloc(MEMP_LOCALHOSTLIST);
   if (entry == NULL) {
@@ -911,7 +911,7 @@ dns_enqueue(const char *name, dns_found_callback found, void *callback_arg)
   pEntry->seqno = dns_seqno++;
   pEntry->found = found;
   pEntry->arg   = callback_arg;
-  namelen = LWIP_MIN(os_strlen(name), DNS_MAX_NAME_LENGTH-1);
+  namelen = LWIP_MIN(strlen(name), DNS_MAX_NAME_LENGTH-1);
   MEMCPY(pEntry->name, name, namelen);
   pEntry->name[namelen] = 0;
 
@@ -950,7 +950,7 @@ dns_gethostbyname(const char *hostname, ip_addr_t *addr, dns_found_callback foun
    * or invalid hostname or invalid hostname length */
   if ((dns_pcb == NULL) || (addr == NULL) ||
       (!hostname) || (!hostname[0]) ||
-      (os_strlen(hostname) >= DNS_MAX_NAME_LENGTH)) {
+      (strlen(hostname) >= DNS_MAX_NAME_LENGTH)) {
     return ERR_ARG;
   }
 
