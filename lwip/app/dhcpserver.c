@@ -13,6 +13,8 @@
 
 #include "user_interface.h"
 
+extern int wifi_softap_set_station_info(uint8_t * chaddr, struct ip_addr *ip);
+
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #endif
