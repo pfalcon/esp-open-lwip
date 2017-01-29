@@ -55,9 +55,6 @@
 
 #include <string.h>
 
-extern char system_get_data_of_array_8(const char *ps);
-#define _system_get_data_of_array_8(a,b) system_get_data_of_array_8(&a[b])
-
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #endif
@@ -807,7 +804,7 @@ tcp_slowtmr(void)
         /* If snd_wnd is zero, use persist timer to send 1 byte probes
          * instead of using the standard retransmission mechanism. */
         pcb->persist_cnt++;
-        if (pcb->persist_cnt >= _system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
+        if (pcb->persist_cnt >= system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
           pcb->persist_cnt = 0;
           if (pcb->persist_backoff < sizeof(tcp_persist_backoff)) {
             pcb->persist_backoff++;
@@ -828,7 +825,7 @@ tcp_slowtmr(void)
           /* Double retransmission time-out unless we are trying to
            * connect to somebody (i.e., we are in SYN_SENT). */
           if (pcb->state != SYN_SENT) {
-            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << _system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
+            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
 //			if (pcb->rto >= TCP_MAXRTO)
 //            	pcb->rto >>= 1;
           }
