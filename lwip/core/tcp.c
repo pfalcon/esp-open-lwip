@@ -55,6 +55,9 @@
 
 #include <string.h>
 
+extern char system_get_data_of_array_8(const char *ps);
+#define _system_get_data_of_array_8(a,b) system_get_data_of_array_8(&a[b])
+
 #ifdef MEMLEAK_DEBUG
 static const char mem_debug_file[] ICACHE_RODATA_ATTR = __FILE__;
 #endif
@@ -638,13 +641,7 @@ tcp_new_port(void)
   static u16_t port = TCP_LOCAL_PORT_RANGE_START;
   
  again:
-//  if (++port >= TCP_LOCAL_PORT_RANGE_END) {
-//    port = TCP_LOCAL_PORT_RANGE_START;
-//  }
-  port = os_random();
-  port %= TCP_LOCAL_PORT_RANGE_END;
-  if (port < TCP_LOCAL_PORT_RANGE_START)
-	  port += TCP_LOCAL_PORT_RANGE_START;
+  port = TCP_LOCAL_PORT_RANGE_START + os_random()%(TCP_LOCAL_PORT_RANGE_END - TCP_LOCAL_PORT_RANGE_START);
   /* Check all PCB lists. */
   for (i = 0; i < NUM_TCP_PCB_LISTS; i++) {  
     for(pcb = *tcp_pcb_lists[i]; pcb != NULL; pcb = pcb->next) {
@@ -810,7 +807,7 @@ tcp_slowtmr(void)
         /* If snd_wnd is zero, use persist timer to send 1 byte probes
          * instead of using the standard retransmission mechanism. */
         pcb->persist_cnt++;
-        if (pcb->persist_cnt >= system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
+        if (pcb->persist_cnt >= _system_get_data_of_array_8(tcp_persist_backoff, pcb->persist_backoff-1)) {
           pcb->persist_cnt = 0;
           if (pcb->persist_backoff < sizeof(tcp_persist_backoff)) {
             pcb->persist_backoff++;
@@ -831,7 +828,7 @@ tcp_slowtmr(void)
           /* Double retransmission time-out unless we are trying to
            * connect to somebody (i.e., we are in SYN_SENT). */
           if (pcb->state != SYN_SENT) {
-            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
+            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << _system_get_data_of_array_8(tcp_backoff, pcb->nrtx);
 //			if (pcb->rto >= TCP_MAXRTO)
 //            	pcb->rto >>= 1;
           }
@@ -1424,9 +1421,13 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
     }
     if (pcb->unsent != NULL) {
       LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge: not all data sent\n"));
+      tcp_segs_free(pcb->unsent);
+      pcb->unsent = NULL;
     }
     if (pcb->unacked != NULL) {
       LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge: data left on ->unacked\n"));
+      tcp_segs_free(pcb->unacked);
+      pcb->unacked = NULL;
     }
 #if TCP_QUEUE_OOSEQ
     if (pcb->ooseq != NULL) {
@@ -1439,10 +1440,6 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
     /* Stop the retransmission timer as it will expect data on unacked
        queue if it fires */
     pcb->rtime = -1;
-
-    tcp_segs_free(pcb->unsent);
-    tcp_segs_free(pcb->unacked);
-    pcb->unacked = pcb->unsent = NULL;
 #if TCP_OVERSIZE
     pcb->unsent_oversize = 0;
 #endif /* TCP_OVERSIZE */
