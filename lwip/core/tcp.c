@@ -638,13 +638,7 @@ tcp_new_port(void)
   static u16_t port = TCP_LOCAL_PORT_RANGE_START;
   
  again:
-//  if (++port >= TCP_LOCAL_PORT_RANGE_END) {
-//    port = TCP_LOCAL_PORT_RANGE_START;
-//  }
-  port = os_random();
-  port %= TCP_LOCAL_PORT_RANGE_END;
-  if (port < TCP_LOCAL_PORT_RANGE_START)
-	  port += TCP_LOCAL_PORT_RANGE_START;
+  port = TCP_LOCAL_PORT_RANGE_START + os_random()%(TCP_LOCAL_PORT_RANGE_END - TCP_LOCAL_PORT_RANGE_START);
   /* Check all PCB lists. */
   for (i = 0; i < NUM_TCP_PCB_LISTS; i++) {  
     for(pcb = *tcp_pcb_lists[i]; pcb != NULL; pcb = pcb->next) {
@@ -1424,9 +1418,13 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
     }
     if (pcb->unsent != NULL) {
       LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge: not all data sent\n"));
+      tcp_segs_free(pcb->unsent);
+      pcb->unsent = NULL;
     }
     if (pcb->unacked != NULL) {
       LWIP_DEBUGF(TCP_DEBUG, ("tcp_pcb_purge: data left on ->unacked\n"));
+      tcp_segs_free(pcb->unacked);
+      pcb->unacked = NULL;
     }
 #if TCP_QUEUE_OOSEQ
     if (pcb->ooseq != NULL) {
@@ -1439,10 +1437,6 @@ tcp_pcb_purge(struct tcp_pcb *pcb)
     /* Stop the retransmission timer as it will expect data on unacked
        queue if it fires */
     pcb->rtime = -1;
-
-    tcp_segs_free(pcb->unsent);
-    tcp_segs_free(pcb->unacked);
-    pcb->unacked = pcb->unsent = NULL;
 #if TCP_OVERSIZE
     pcb->unsent_oversize = 0;
 #endif /* TCP_OVERSIZE */
