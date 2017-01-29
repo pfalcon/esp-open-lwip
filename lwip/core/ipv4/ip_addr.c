@@ -40,6 +40,8 @@
 #include "lwip/ip_addr.h"
 #include "lwip/netif.h"
 
+extern int isdigit ( int c );
+
 /* used by IP_ADDR_ANY and IP_ADDR_BROADCAST in ip_addr.h */
 const ip_addr_t ip_addr_any ICACHE_RODATA_ATTR = { IPADDR_ANY };
 const ip_addr_t ip_addr_broadcast ICACHE_RODATA_ATTR = { IPADDR_BROADCAST };

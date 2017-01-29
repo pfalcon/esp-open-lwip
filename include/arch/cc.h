@@ -38,7 +38,23 @@
 #include "c_types.h"
 #include "ets_sys.h"
 #include "osapi.h"
+#include <stdarg.h>
+
 #define EFAULT 14
+
+//Extra symbols to avoid implicit declaration warnings
+extern void *ets_memset(void *s, int c, size_t n);
+extern void ets_memcpy(void*, const void*, uint32);
+
+extern size_t ets_strlen(const char *s);
+extern int os_printf_plus(const char *format, ...)  __attribute__ ((format (printf, 1, 2)));
+extern int ets_sprintf(char *str, const char *format, ...)  __attribute__ ((format (printf, 2, 3)));
+extern void ets_timer_arm_new(ETSTimer *ptimer, uint32_t milliseconds, bool repeat_flag, int isMstimer);
+extern void ets_timer_disarm(ETSTimer *a);
+extern void ets_timer_setfn(ETSTimer *t, ETSTimerFunc *pfunction, void *parg);
+extern uint32 r_rand(void);
+extern int ets_memcmp(const void *s1, const void *s2, size_t n);
+struct netif * eagle_lwip_getif(uint8 index);
 
 //#define LWIP_PROVIDE_ERRNO
 
